@@ -5,13 +5,17 @@ using System.Reflection;
 using System.Web;
 using System.Web.Optimization;
 using System.Web.Routing;
-using assessment_platform_developer.Repositories;
 using SimpleInjector.Diagnostics;
 using System.Web.Compilation;
 using System.Web.UI;
 using Microsoft.Web.Infrastructure.DynamicModuleHelper;
-using assessment_platform_developer.Services;
 using SimpleInjector.Integration.Web;
+using assessment_platform_developer.Application.Commands;
+using assessment_platform_developer.Application.Common;
+using assessment_platform_developer.Application.Queries;
+using System.Collections.Generic;
+using assessment_platform_developer.Domain.Interfaces;
+using assessment_platform_developer.Infrastructure.Repositories;
 
 namespace assessment_platform_developer
 {
@@ -74,8 +78,12 @@ namespace assessment_platform_developer
 			container.Options.DefaultScopedLifestyle = new WebRequestLifestyle();
 
 			// 2. Configure the container (register)
-			container.Register<ICustomerRepository, CustomerRepository>(Lifestyle.Singleton);
-			container.Register<ICustomerService, CustomerService>(Lifestyle.Scoped);
+			//container.Register<ICustomerRepository, CustomerRepository>(Lifestyle.Singleton);
+			
+			container.Register<ICommandHandler<CreateCustomerCommand>, CreateCustomerCommandHandler>(Lifestyle.Scoped);
+			container.Register<IQueryHandler<GetAllCustomersQuery, List<CustomerResponse>>, GetAllCustomersQueryHandler>(Lifestyle.Scoped);
+			container.Register<ICustomerRepository, CustomerRepository>(Lifestyle.Scoped);
+			//container.Register<ICustomerService, CustomerService>(Lifestyle.Scoped);
 
 			// Register your Page classes to allow them to be verified and diagnosed.
 			RegisterWebPages(container);
