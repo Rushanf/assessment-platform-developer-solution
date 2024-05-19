@@ -60,8 +60,8 @@
 	<div>
 		<div class="container body-content">
 			<h2>Customer Registry</h2>
-			<asp:DropDownList runat="server" ID="CustomersDDL" CssClass="form-control"  AutoPostBack="true" 
-				OnSelectedIndexChanged="customer_Change"/>
+			<asp:DropDownList runat="server" ID="CustomersDDL" CssClass="form-control" AutoPostBack="true" 
+				OnSelectedIndexChanged="Customer_Changed"/>
 		</div>
 
 		<div class="container body-content">
@@ -73,6 +73,7 @@
 
 						<div class="col-md-6">
 							<h1>Add customer</h1>
+							<asp:TextBox ID="CustomerId" runat="server" hidden></asp:TextBox>
 							<div class="form-group">
 								<asp:Label ID="CustomerNameLabel" runat="server" Text="Name" CssClass="form-label"></asp:Label>
 								<asp:TextBox ID="CustomerName" runat="server" CssClass="form-control"></asp:TextBox>
@@ -110,7 +111,7 @@
 
 							<div class="form-group">
 								<asp:Label ID="CustomerCountryLabel" runat="server" Text="Country" CssClass="form-label"></asp:Label>
-								<asp:DropDownList ID="CountryDropDownList" runat="server" CssClass="form-control"/>
+								<asp:DropDownList ID="CountryDropDownList" OnSelectedIndexChanged="Country_Changed"  AutoPostBack="true" runat="server" CssClass="form-control"/>
 							</div>
 
 							<div class="form-group">
@@ -137,6 +138,12 @@
 
 							<div class="form-group">
 								<asp:Button ID="AddButton" class="btn btn-primary btn-md" runat="server" Text="Add" OnClick="AddButton_Click" />
+							</div>
+							<div class="form-group">
+								<asp:Button ID="EditButton" class="btn btn-primary btn-md" runat="server" Text="Update" OnClick="UpdateButton_Click" />
+							</div>
+							<div class="form-group">
+								<asp:Button ID="DeleteButton" class="btn btn-primary btn-md" runat="server" Text="Delete" OnClick="DeleteButton_Click" />
 							</div>
 						</div>
 					</div>

@@ -1,12 +1,10 @@
-﻿using assessment_platform_developer.Domain.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace assessment_platform_developer.Application.Queries
+namespace assessment_platform_developer.Application.Commands
 {
-	[Serializable]
-    public class CustomerResponse
+    public class CustomerBasicCommand
     {
         public int ID { get; set; }
 		public string Name { get; set; }
@@ -22,6 +20,6 @@ namespace assessment_platform_developer.Application.Queries
 		public string ContactPhone { get; set; }
 		public string ContactEmail { get; set; }
 		public string ContactTitle { get; set; }
-		public string ContactNotes { get; set; }		
+		public string ContactNotes { get; set; }
     }
 }

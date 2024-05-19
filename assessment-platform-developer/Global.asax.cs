@@ -79,11 +79,16 @@ namespace assessment_platform_developer
 
 			// 2. Configure the container (register)
 			//container.Register<ICustomerRepository, CustomerRepository>(Lifestyle.Singleton);
-			
+			//Register Commands
 			container.Register<ICommandHandler<CreateCustomerCommand>, CreateCustomerCommandHandler>(Lifestyle.Scoped);
-			container.Register<IQueryHandler<GetAllCustomersQuery, List<CustomerResponse>>, GetAllCustomersQueryHandler>(Lifestyle.Scoped);
+			container.Register<ICommandHandler<UpdateCustomerCommand>, UpdateCustomerCommandHandler>(Lifestyle.Scoped);
+			container.Register<ICommandHandler<DeleteCustomerCommand>, DeleteCustomerCommandHandler>(Lifestyle.Scoped);
+
+			//Register Queries
+			container.Register<IQueryHandler<GetAllCustomersQuery, List<CustomerBasicResponse>>, GetAllCustomersQueryHandler>(Lifestyle.Scoped);
+			container.Register<IQueryHandler<GetCustomerQuery, CustomerResponse>, GetCustomerQueryHandler>(Lifestyle.Scoped);
+
 			container.Register<ICustomerRepository, CustomerRepository>(Lifestyle.Scoped);
-			//container.Register<ICustomerService, CustomerService>(Lifestyle.Scoped);
 
 			// Register your Page classes to allow them to be verified and diagnosed.
 			RegisterWebPages(container);

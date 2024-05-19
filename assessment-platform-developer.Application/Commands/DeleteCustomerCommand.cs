@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace assessment_platform_developer.Application.Commands
 {
-    public class CreateCustomerCommand : CustomerBasicCommand
+    public class DeleteCustomerCommand
     {	
+        public int ID { get; set; }
     }
 }

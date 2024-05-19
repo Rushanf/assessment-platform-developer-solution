@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace assessment_platform_developer.Application.Queries
 {
-    public class GetAllCustomersQueryHandler : IQueryHandler<GetAllCustomersQuery, List<CustomerResponse>>
+    public class GetAllCustomersQueryHandler : IQueryHandler<GetAllCustomersQuery, List<CustomerBasicResponse>>
     {
         private readonly ICustomerRepository _customerRepository;
 
@@ -17,20 +17,16 @@ namespace assessment_platform_developer.Application.Queries
             _customerRepository = customerRepository;
         }
 
-        public List<CustomerResponse> Handle()
+        public List<CustomerBasicResponse> Handle(GetAllCustomersQuery query)
         {
             var result = _customerRepository.GetAll();
-            List<CustomerResponse> customers = new List<CustomerResponse>(); 
+            List<CustomerBasicResponse> customers = new List<CustomerBasicResponse>(); 
 
             foreach(var customer  in result)
             {
-                CustomerResponse cust = new CustomerResponse();
+                CustomerBasicResponse cust = new CustomerBasicResponse();
                 cust.Name = customer.Name;
-                //cust.Email = customer.Email;
-                //cust.Phone = customer.Phone;    
-                //cust.City = customer.City;  
-                //cust.Country = customer.Country;
-               
+                cust.ID = customer.ID;               
                 customers.Add(cust);
             }
             return customers;

@@ -8,8 +8,8 @@ namespace assessment_platform_developer.Common.Enums
 {
     public enum Countries
 	{
-		Canada,
+		Canada = 0,
 		[Description("United States")]
-		UnitedStates
+		UnitedStates = 1
 	}
 }

@@ -9,34 +9,67 @@ using assessment_platform_developer.Application.Common;
 using assessment_platform_developer.Application.Queries;
 using assessment_platform_developer.Application.Commands;
 using assessment_platform_developer.Common.Enums;
+using Microsoft.Ajax.Utilities;
+using assessment_platform_developer.Domain.Entities;
+using System.Web.Services.Description;
+using System.Web.Services;
 
 namespace assessment_platform_developer
 {
 	public partial class Customers : Page
 	{
-		private static List<CustomerResponse> customers = new List<CustomerResponse>();
-
+		private static List<CustomerBasicResponse> customers = new List<CustomerBasicResponse>();
 		protected void Page_Load(object sender, EventArgs e)
 		{
 			if (!IsPostBack)
 			{
-				var testContainer = (Container)HttpContext.Current.Application["DIContainer"];
-				var customerService = testContainer.GetInstance<IQueryHandler<GetAllCustomersQuery, List<CustomerResponse>>>();
-
-				var allCustomers = customerService.Handle();
+				var customerService = GetService<IQueryHandler<GetAllCustomersQuery, List<CustomerBasicResponse>>>();
+				var allCustomers = customerService.Handle(new GetAllCustomersQuery());
 
 				ViewState["Customers"] = allCustomers;
+				PopulateCustomerListBox();				
+				PopulateCustomerDropDownLists();
+				SetEditMode(false);
 			}
 			else
 			{
-				customers = (List<CustomerResponse>)ViewState["Customers"];
+				customers = (List<CustomerBasicResponse>)ViewState["Customers"];
 			}
+			
+		}
 
-			PopulateCustomerListBox();
-			PopulateCustomerDropDownLists();
+		private void PopulateCustomerListBox()
+		{
+			CustomersDDL.Items.Clear();
+
+			var customers = GetService<IQueryHandler<GetAllCustomersQuery, List<CustomerBasicResponse>>>();
+			var allCustomers = customers.Handle(new GetAllCustomersQuery());
+
+			var storedCustomers = allCustomers.Select(c => new ListItem(c.Name, c.ID.ToString())).ToArray();
+			
+			Dictionary<string, string> options = new Dictionary<string, string>();
+			options.Add("-1", "Add new customer");
+
+			// Declare a Dictionary to hold all the Options with Value and Text.
+			for(int i = 0; i < storedCustomers.Length; i++)
+			{
+				options.Add(storedCustomers[i].Value, storedCustomers[i].Text);
+			}
+ 
+			// Bind the Dictionary to the DropDownList.
+			CustomersDDL.DataSource = options;
+			CustomersDDL.DataTextField = "value";
+			CustomersDDL.DataValueField = "key";
+			CustomersDDL.DataBind();			
 		}
 
 		private void PopulateCustomerDropDownLists()
+		{
+			PopulateCountries();
+			PopulateStates();
+		}
+
+		private void PopulateCountries()
 		{
 			var countryList = Enum.GetValues(typeof(Countries))
 				.Cast<Countries>()
@@ -48,70 +81,139 @@ namespace assessment_platform_developer
 				.ToArray();
 
 			CountryDropDownList.Items.AddRange(countryList);
-			CountryDropDownList.SelectedValue = ((int)Countries.Canada).ToString();
-
-
-			var provinceList = Enum.GetValues(typeof(CanadianProvinces))
-				.Cast<CanadianProvinces>()
-				.Select(p => new ListItem
-				{
-					Text = p.ToString(),
-					Value = ((int)p).ToString()
-				})
-				.ToArray();
+		}
+		private void PopulateStates(int id = 0)
+		{					
+			StateDropDownList.Items.Clear();
+			ListItem[] provinceList = null;
+			if(id == (int)Countries.Canada)
+			{	
+				provinceList = Enum.GetValues(typeof(CanadianProvinces))
+					.Cast<CanadianProvinces>()
+					.Select(p => new ListItem
+					{
+						Text = p.ToString(),
+						Value = ((int)p).ToString()
+					})
+					.ToArray();
+				
+				CountryDropDownList.SelectedValue = ((int)Countries.Canada).ToString();
+			}
+			if(id == (int)Countries.UnitedStates)
+			{				
+				provinceList = Enum.GetValues(typeof(USStates))
+					.Cast<USStates>()
+					.Select(p => new ListItem
+					{
+						Text = p.ToString(),
+						Value = ((int)p).ToString()
+					})
+					.ToArray();
+				CountryDropDownList.SelectedValue = ((int)Countries.UnitedStates).ToString();
+			}
 
 			StateDropDownList.Items.Add(new ListItem(""));
 			StateDropDownList.Items.AddRange(provinceList);
 		}
 
-		protected void PopulateCustomerListBox()
+		
+
+		protected void Country_Changed(object sender, EventArgs e)
 		{
-			CustomersDDL.Items.Clear();
+			DropDownList dl = (DropDownList)sender;
+			var id = dl.SelectedItem.Value;
 
-			var testContainer = (Container)HttpContext.Current.Application["DIContainer"];
-			var customers = testContainer.GetInstance<IQueryHandler<GetAllCustomersQuery, List<CustomerResponse>>>();
-			var allCustomers = customers.Handle();
-
-			var storedCustomers = allCustomers.Select(c => new ListItem(c.Name, c.ID.ToString())).ToArray();
-			if (storedCustomers.Length != 0)
-			{
-				CustomersDDL.Items.AddRange(storedCustomers);
-			}
-
-			
-			CustomersDDL.Items.Insert(0, new ListItem("Add new customer", "-1"));
+			PopulateStates(Convert.ToInt32(id));
 		}
 
-		protected void customer_Change(object sender, EventArgs e)
+		protected void Customer_Changed(object sender, EventArgs e)
 		{
-			
-			var x = CustomersDDL.SelectedItem.Value;
+			DropDownList dl = (DropDownList)sender;
+			var id = dl.SelectedItem.Value;
+
+			if (Convert.ToInt32(dl.SelectedItem.Value) > -1)
+			{				
+				SetEditMode(true);
+				var customer = GetCustomer(Convert.ToInt32(id));
+				LoadCustomer(customer);
+			}
+			else
+			{
+				SetEditMode(false);
+				ClearForm();
+			}
+
+		}
+
+		private void SetEditMode(bool isEditMode = false)
+		{
+			if(isEditMode)
+			{
+				EditButton.Visible = true;
+				DeleteButton.Visible = true;
+				AddButton.Visible = false;
+			}
+			else 
+			{ 
+				EditButton.Visible = false;
+				DeleteButton.Visible = false;
+				AddButton.Visible = true;
+			}
+		}
+
+		private CustomerResponse GetCustomer(int Id)
+		{
+			var customerService = GetService<IQueryHandler<GetCustomerQuery, CustomerResponse>>();
+
+			return customerService.Handle(new GetCustomerQuery(){ID = Id});
+        }
+
+		private TService GetService<TService>() where TService : class
+		{
+			var testContainer = (Container)HttpContext.Current.Application["DIContainer"];
+			return testContainer.GetInstance<TService>();
 		}
 
 		protected void AddButton_Click(object sender, EventArgs e)
 		{
-			var customer = new CreateCustomerCommand
-			{
-				Name = CustomerName.Text,
-				Address = CustomerAddress.Text,
-				City = CustomerCity.Text,
-				State = StateDropDownList.SelectedValue,
-				Zip = CustomerZip.Text,
-				Country = CountryDropDownList.SelectedValue,
-				Email = CustomerEmail.Text,
-				Phone = CustomerPhone.Text,
-				Notes = CustomerNotes.Text,
-				ContactName = ContactName.Text,
-				ContactPhone = CustomerPhone.Text,
-				ContactEmail = CustomerEmail.Text
-			};
+			var customer = (CreateCustomerCommand)GetMappedCustomerCommandModel(new CreateCustomerCommand());
+			var customerService = GetService<ICommandHandler<CreateCustomerCommand>>();
 
-			var testContainer = (Container)HttpContext.Current.Application["DIContainer"];
-			var customerService = testContainer.GetInstance<ICommandHandler<CreateCustomerCommand>>();
 			customerService.Handle(customer);
 
 			PopulateCustomerListBox();
 
+			ClearForm();
+		}
+
+		protected void UpdateButton_Click(object sender, EventArgs e)
+		{
+			var customer = (UpdateCustomerCommand)GetMappedCustomerCommandModel(new UpdateCustomerCommand());
+			var customerService = GetService<ICommandHandler<UpdateCustomerCommand>>();
+			
+			customerService.Handle(customer);
+
+			PopulateCustomerListBox();
+
+			ClearForm();
+			SetEditMode(false);
+		}
+
+		protected void DeleteButton_Click(object sender, EventArgs e)
+		{
+			var customerService = GetService<ICommandHandler<DeleteCustomerCommand>>();
+			
+			customerService.Handle(new DeleteCustomerCommand(){ID = Convert.ToInt32(CustomerId.Text) });
+
+			PopulateCustomerListBox();
+
+			ClearForm();
+			SetEditMode(false);
+		}
+
+		private void ClearForm()
+		{
+			CustomerId.Text = string.Empty;
 			CustomerName.Text = string.Empty;
 			CustomerAddress.Text = string.Empty;
 			CustomerEmail.Text = string.Empty;
@@ -125,5 +227,41 @@ namespace assessment_platform_developer
 			ContactPhone.Text = string.Empty;
 			ContactEmail.Text = string.Empty;
 		}
+
+		private void LoadCustomer(CustomerResponse customerResponse)
+		{
+			CustomerId.Text = customerResponse.ID.ToString();
+			CustomerName.Text = customerResponse.Name;
+			CustomerAddress.Text = customerResponse.Address;
+			CustomerEmail.Text = customerResponse.Email;
+			CustomerPhone.Text = customerResponse.Phone;
+			CustomerCity.Text = customerResponse.City;
+			StateDropDownList.SelectedIndex = String.IsNullOrEmpty(customerResponse.State) ? 0 : Convert.ToInt32(customerResponse.State);
+			CustomerZip.Text = customerResponse.Zip;
+			CountryDropDownList.SelectedIndex = String.IsNullOrEmpty(customerResponse.Country) ? 0 : Convert.ToInt32(customerResponse.Country);
+			CustomerNotes.Text = customerResponse.Notes;
+			ContactName.Text = customerResponse.ContactName;
+			ContactPhone.Text = customerResponse.ContactPhone;
+			ContactEmail.Text = customerResponse.ContactEmail;
+		}
+
+		private Object GetMappedCustomerCommandModel(CustomerBasicCommand createCustomer)
+		{			
+				createCustomer.ID = String.IsNullOrEmpty(CustomerId.Text) ? 0 : Convert.ToInt32(CustomerId.Text);
+				createCustomer.Name = CustomerName.Text;
+				createCustomer.Address = CustomerAddress.Text;
+				createCustomer.City = CustomerCity.Text;
+				createCustomer.State = StateDropDownList.SelectedValue;
+				createCustomer.Zip = CustomerZip.Text;
+				createCustomer.Country = CountryDropDownList.SelectedValue;
+				createCustomer.Email = CustomerEmail.Text;
+				createCustomer.Phone = CustomerPhone.Text;
+				createCustomer.Notes = CustomerNotes.Text;
+				createCustomer.ContactName = ContactName.Text;
+				createCustomer.ContactPhone = CustomerPhone.Text;
+				createCustomer.ContactEmail = CustomerEmail.Text;
+
+			return createCustomer;
+		}		
 	}
 }

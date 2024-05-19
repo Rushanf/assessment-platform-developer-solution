@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace assessment_platform_developer.Application.Common
 {
-    public interface IQueryHandler<T, ResultType>
+    public interface IQueryHandler<Query, ResultType>
     {
-        ResultType Handle();
+        ResultType Handle(Query query);
     }
 }

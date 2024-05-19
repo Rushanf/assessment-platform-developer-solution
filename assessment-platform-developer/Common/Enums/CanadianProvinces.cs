@@ -8,23 +8,23 @@ namespace assessment_platform_developer.Common.Enums
 {
     public enum CanadianProvinces
 	{
-		Alberta,
+		Alberta = 1,
 		[Description("British Columbia")]
-		BritishColumbia,
-		Manitoba,
-		NewBrunswick,
+		BritishColumbia = 2,
+		Manitoba = 3,
+		NewBrunswick = 4,
 		[Description("Newfoundland and Labrador")]
-		NewfoundlandAndLabrador,
+		NewfoundlandAndLabrador = 5,
 		[Description("Northwest Territories")]
-		NovaScotia,
-		Ontario,
+		NovaScotia = 6,
+		Ontario = 7,
 		[Description("Prince Edward Island")]
-		PrinceEdwardIsland,
-		Quebec,
-		Saskatchewan,
+		PrinceEdwardIsland = 8,
+		Quebec = 9,
+		Saskatchewan = 10,
 		[Description("Yukon")]
-		NorthwestTerritories,
-		Nunavut,
-		Yukon
+		NorthwestTerritories = 11,
+		Nunavut = 12,
+		Yukon = 13
 	}
 }
