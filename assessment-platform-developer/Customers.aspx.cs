@@ -13,12 +13,14 @@ using Microsoft.Ajax.Utilities;
 using assessment_platform_developer.Domain.Entities;
 using System.Web.Services.Description;
 using System.Web.Services;
+using System.Text.RegularExpressions;
 
 namespace assessment_platform_developer
 {
 	public partial class Customers : Page
 	{
 		private static List<CustomerBasicResponse> customers = new List<CustomerBasicResponse>();
+		bool isFormValid = true;
 		protected void Page_Load(object sender, EventArgs e)
 		{
 			if (!IsPostBack)
@@ -34,8 +36,7 @@ namespace assessment_platform_developer
 			else
 			{
 				customers = (List<CustomerBasicResponse>)ViewState["Customers"];
-			}
-			
+			}			
 		}
 
 		private void PopulateCustomerListBox()
@@ -116,8 +117,6 @@ namespace assessment_platform_developer
 			StateDropDownList.Items.AddRange(provinceList);
 		}
 
-		
-
 		protected void Country_Changed(object sender, EventArgs e)
 		{
 			DropDownList dl = (DropDownList)sender;
@@ -176,27 +175,31 @@ namespace assessment_platform_developer
 
 		protected void AddButton_Click(object sender, EventArgs e)
 		{
-			var customer = (CreateCustomerCommand)GetMappedCustomerCommandModel(new CreateCustomerCommand());
-			var customerService = GetService<ICommandHandler<CreateCustomerCommand>>();
+			if(isFormValid){
+				var customer = (CreateCustomerCommand)GetMappedCustomerCommandModel(new CreateCustomerCommand());
+				var customerService = GetService<ICommandHandler<CreateCustomerCommand>>();
 
-			customerService.Handle(customer);
+				customerService.Handle(customer);
 
-			PopulateCustomerListBox();
+				PopulateCustomerListBox();
 
-			ClearForm();
+				ClearForm();
+			}
 		}
 
 		protected void UpdateButton_Click(object sender, EventArgs e)
 		{
-			var customer = (UpdateCustomerCommand)GetMappedCustomerCommandModel(new UpdateCustomerCommand());
-			var customerService = GetService<ICommandHandler<UpdateCustomerCommand>>();
+			if(isFormValid){
+				var customer = (UpdateCustomerCommand)GetMappedCustomerCommandModel(new UpdateCustomerCommand());
+				var customerService = GetService<ICommandHandler<UpdateCustomerCommand>>();
 			
-			customerService.Handle(customer);
+				customerService.Handle(customer);
 
-			PopulateCustomerListBox();
+				PopulateCustomerListBox();
 
-			ClearForm();
-			SetEditMode(false);
+				ClearForm();
+				SetEditMode(false);
+			}
 		}
 
 		protected void DeleteButton_Click(object sender, EventArgs e)
@@ -209,6 +212,46 @@ namespace assessment_platform_developer
 
 			ClearForm();
 			SetEditMode(false);
+		}
+
+		//Validations
+		protected void ZipCodeValidate(object source, ServerValidateEventArgs args)
+		{
+			string zip = args.Value;
+			if (!string.IsNullOrEmpty(zip))
+			{
+				args.IsValid = false;
+				if (Convert.ToInt32(CountryDropDownList.SelectedValue) == ((int)Countries.Canada))
+				{
+					Regex zipRegex = new Regex(@"^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$"); // Define regex for ZIP code format X#X-#X#
+					if (zipRegex.IsMatch(zip))
+					{
+						args.IsValid = true;
+						isFormValid = true;
+					}
+					else
+					{
+						args.IsValid = false;
+						isFormValid = false;
+						return;
+					}
+				}
+				else if (Convert.ToInt32(CountryDropDownList.SelectedValue) == ((int)Countries.UnitedStates))
+				{
+					Regex zipRegex = new Regex(@"^\d{5}(-\d{4})?$"); // Define regex for ZIP code format #####-#### or #####
+					if (zipRegex.IsMatch(zip))
+					{
+						args.IsValid = true;
+						isFormValid = true;
+					}
+					else
+					{
+						args.IsValid = false;
+						isFormValid = false;
+						return;
+					}
+				}
+			}
 		}
 
 		private void ClearForm()
@@ -258,10 +301,11 @@ namespace assessment_platform_developer
 				createCustomer.Phone = CustomerPhone.Text;
 				createCustomer.Notes = CustomerNotes.Text;
 				createCustomer.ContactName = ContactName.Text;
-				createCustomer.ContactPhone = CustomerPhone.Text;
-				createCustomer.ContactEmail = CustomerEmail.Text;
+				createCustomer.ContactPhone = ContactPhone.Text;
+				createCustomer.ContactEmail = ContactEmail.Text;
 
 			return createCustomer;
-		}		
+		}
+		
 	}
 }
