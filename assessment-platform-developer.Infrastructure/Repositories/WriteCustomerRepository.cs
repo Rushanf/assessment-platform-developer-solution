@@ -1,37 +1,34 @@
 ﻿using assessment_platform_developer.Domain.Entities;
 using assessment_platform_developer.Domain.Interfaces;
-using System;
+using assessment_platform_developer.Infrastructure.DataStore;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace assessment_platform_developer.Infrastructure.Repositories
 {
-    public class CustomerRepository : ICustomerRepository
-	{
+    public class WriteCustomerRepository : IWriteRepository<Customer>
+    {
 		// Assuming you have a DbContext named 'context'
-		private static List<Customer> customers = new List<Customer>();
+		List<Customer> customers = DataBase.customers;
 
-		public IEnumerable<Customer> GetAll()
-		{
-			return customers;
-		}
-
-		public Customer Get(int id)
-		{
-			return customers.FirstOrDefault(c => c.ID == id);
-		}
-
-		public void Add(Customer customer)
-		{
-			customer.ID = customers.Count()+1;
+        public void Add(Customer customer)
+        {
+            customer.ID = DataBase.customers.Count()+1;
 			customers.Add(customer);
-		}
+        }
 
-		public void Update(Customer customer)
-		{
-			var existingCustomer = customers.FirstOrDefault(c => c.ID == customer.ID);
+        public void Delete(int id)
+        {
+            var customer = customers.FirstOrDefault(c => c.ID == id);
+			if (customer != null)
+			{
+				customers.Remove(customer);
+			}
+        }
+
+        public void Update(Customer customer)
+        {
+            var existingCustomer = customers.FirstOrDefault(c => c.ID == customer.ID);
 			if (existingCustomer != null)
 			{
 				existingCustomer.Name = customer.Name;
@@ -48,15 +45,6 @@ namespace assessment_platform_developer.Infrastructure.Repositories
 				existingCustomer.ContactEmail = customer.ContactEmail;
 				existingCustomer.ContactPhone = customer.ContactPhone;
 			}
-		}
-
-		public void Delete(int id)
-		{
-			var customer = customers.FirstOrDefault(c => c.ID == id);
-			if (customer != null)
-			{
-				customers.Remove(customer);
-			}
-		}
-	}
+        }
+    }
 }

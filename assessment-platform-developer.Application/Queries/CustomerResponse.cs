@@ -1,7 +1,4 @@
-﻿using assessment_platform_developer.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 
 namespace assessment_platform_developer.Application.Queries
 {

@@ -1,5 +1,6 @@
 ﻿using assessment_platform_developer.Application.Common;
 using assessment_platform_developer.Application.Common.Mapper;
+using assessment_platform_developer.Domain.Entities;
 using assessment_platform_developer.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -9,15 +10,15 @@ namespace assessment_platform_developer.Application.Queries
 {
     public class GetCustomerQueryHandler : IQueryHandler<GetCustomerQuery, CustomerResponse>
     {
-        private readonly ICustomerRepository _customerRepository;
-        public GetCustomerQueryHandler(ICustomerRepository customerRepository)
+        private readonly IReadRepository<Customer> _customerReadRepository;
+        public GetCustomerQueryHandler(IReadRepository<Customer> customerReadRepository)
         {
-            _customerRepository = customerRepository;
+            _customerReadRepository = customerReadRepository;
         }
 
         public CustomerResponse Handle(GetCustomerQuery query)
         {
-            var result = _customerRepository.Get(query.ID);
+            var result = _customerReadRepository.Get(query.ID);
             return Mapper.ConvertToCustomerQueryResult(result);
         }
     }

@@ -1,4 +1,5 @@
 ﻿using assessment_platform_developer.Application.Common;
+using assessment_platform_developer.Domain.Entities;
 using assessment_platform_developer.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -10,16 +11,16 @@ namespace assessment_platform_developer.Application.Queries
 {
     public class GetAllCustomersQueryHandler : IQueryHandler<GetAllCustomersQuery, List<CustomerBasicResponse>>
     {
-        private readonly ICustomerRepository _customerRepository;
+        private readonly IReadRepository<Customer> _customerReadRepository;
 
-        public GetAllCustomersQueryHandler(ICustomerRepository customerRepository)
+        public GetAllCustomersQueryHandler(IReadRepository<Customer> customerReadRepository)
         {
-            _customerRepository = customerRepository;
+            _customerReadRepository = customerReadRepository;
         }
 
         public List<CustomerBasicResponse> Handle(GetAllCustomersQuery query)
         {
-            var result = _customerRepository.GetAll();
+            var result = _customerReadRepository.GetAll();
             List<CustomerBasicResponse> customers = new List<CustomerBasicResponse>(); 
 
             foreach(var customer  in result)
