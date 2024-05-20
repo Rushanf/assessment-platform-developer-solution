@@ -5,29 +5,30 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Container = SimpleInjector.Container;
-using assessment_platform_developer.Application.Common;
 using assessment_platform_developer.Application.Queries;
 using assessment_platform_developer.Application.Commands;
 using assessment_platform_developer.Common.Enums;
-using Microsoft.Ajax.Utilities;
-using assessment_platform_developer.Domain.Entities;
-using System.Web.Services.Description;
-using System.Web.Services;
 using System.Text.RegularExpressions;
+using assessment_platform_developer.Services;
 
 namespace assessment_platform_developer
 {
 	public partial class Customers : Page
 	{
 		private static List<CustomerBasicResponse> customers = new List<CustomerBasicResponse>();
-		bool isFormValid = true;
+        private readonly ICustomerService customerService;
+		bool isFormValid = true;		
+
+        public Customers()
+        {
+            customerService = new CustomerService((Container)HttpContext.Current.Application["DIContainer"]);
+        }
+
 		protected void Page_Load(object sender, EventArgs e)
 		{
 			if (!IsPostBack)
 			{
-				var customerService = GetService<IQueryHandler<GetAllCustomersQuery, List<CustomerBasicResponse>>>();
-				var allCustomers = customerService.Handle(new GetAllCustomersQuery());
-
+				var allCustomers = customerService.GetAllCustomers();               
 				ViewState["Customers"] = allCustomers;
 				PopulateCustomerListBox();				
 				PopulateCustomerDropDownLists();
@@ -43,8 +44,7 @@ namespace assessment_platform_developer
 		{
 			CustomersDDL.Items.Clear();
 
-			var customers = GetService<IQueryHandler<GetAllCustomersQuery, List<CustomerBasicResponse>>>();
-			var allCustomers = customers.Handle(new GetAllCustomersQuery());
+			var allCustomers = customerService.GetAllCustomers();       
 
 			var storedCustomers = allCustomers.Select(c => new ListItem(c.Name, c.ID.ToString())).ToArray();
 			
@@ -160,29 +160,18 @@ namespace assessment_platform_developer
 			}
 		}
 
-		private CustomerResponse GetCustomer(int Id)
+		private CustomerResponse GetCustomer(int id)
 		{
-			var customerService = GetService<IQueryHandler<GetCustomerQuery, CustomerResponse>>();
-
-			return customerService.Handle(new GetCustomerQuery(){ID = Id});
+			return customerService.GetCustomer(id);       
         }
-
-		private TService GetService<TService>() where TService : class
-		{
-			var testContainer = (Container)HttpContext.Current.Application["DIContainer"];
-			return testContainer.GetInstance<TService>();
-		}
 
 		protected void AddButton_Click(object sender, EventArgs e)
 		{
 			if(isFormValid){
 				var customer = (CreateCustomerCommand)GetMappedCustomerCommandModel(new CreateCustomerCommand());
-				var customerService = GetService<ICommandHandler<CreateCustomerCommand>>();
-
-				customerService.Handle(customer);
+				customerService.CreateCustomer(customer);
 
 				PopulateCustomerListBox();
-
 				ClearForm();
 			}
 		}
@@ -191,12 +180,9 @@ namespace assessment_platform_developer
 		{
 			if(isFormValid){
 				var customer = (UpdateCustomerCommand)GetMappedCustomerCommandModel(new UpdateCustomerCommand());
-				var customerService = GetService<ICommandHandler<UpdateCustomerCommand>>();
-			
-				customerService.Handle(customer);
+				customerService.UpdateCustomer(customer);
 
 				PopulateCustomerListBox();
-
 				ClearForm();
 				SetEditMode(false);
 			}
@@ -204,10 +190,7 @@ namespace assessment_platform_developer
 
 		protected void DeleteButton_Click(object sender, EventArgs e)
 		{
-			var customerService = GetService<ICommandHandler<DeleteCustomerCommand>>();
-			
-			customerService.Handle(new DeleteCustomerCommand(){ID = Convert.ToInt32(CustomerId.Text) });
-
+			customerService.DeleteCustomer(new DeleteCustomerCommand(){ID = Convert.ToInt32(CustomerId.Text) });
 			PopulateCustomerListBox();
 
 			ClearForm();
