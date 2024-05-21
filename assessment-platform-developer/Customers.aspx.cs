@@ -10,6 +10,8 @@ using assessment_platform_developer.Application.Commands;
 using assessment_platform_developer.Common.Enums;
 using System.Text.RegularExpressions;
 using assessment_platform_developer.Services;
+using System.Reflection.Emit;
+using assessment_platform_developer.Common.Helpers;
 
 namespace assessment_platform_developer
 {
@@ -17,12 +19,20 @@ namespace assessment_platform_developer
 	{
 		private static List<CustomerBasicResponse> customers = new List<CustomerBasicResponse>();
         private readonly ICustomerService customerService;
-		bool isFormValid = true;		
+		bool isFormValid = true;
 
-        public Customers()
-        {
-            customerService = new CustomerService((Container)HttpContext.Current.Application["DIContainer"]);
-        }
+		public Customers()
+		{
+			customerService = new CustomerService((Container)HttpContext.Current.Application["DIContainer"]);
+		}
+
+		////For Testing : uncomment for testing and comment the default constructor
+		//public Customers(ICustomerService customerService)
+		//{
+		//	this.customerService = customerService;
+		//}
+		//public DropDownList TestCountryDropDownList => CountryDropDownList;
+
 
 		protected void Page_Load(object sender, EventArgs e)
 		{
@@ -83,6 +93,7 @@ namespace assessment_platform_developer
 
 			CountryDropDownList.Items.AddRange(countryList);
 		}
+
 		private void PopulateStates(int id = 0)
 		{					
 			StateDropDownList.Items.Clear();
@@ -133,7 +144,7 @@ namespace assessment_platform_developer
 			if (Convert.ToInt32(dl.SelectedItem.Value) > -1)
 			{				
 				SetEditMode(true);
-				var customer = GetCustomer(Convert.ToInt32(id));
+				var customer = customerService.GetCustomer(Convert.ToInt32(id));
 				LoadCustomer(customer);
 			}
 			else
@@ -160,19 +171,15 @@ namespace assessment_platform_developer
 			}
 		}
 
-		private CustomerResponse GetCustomer(int id)
-		{
-			return customerService.GetCustomer(id);       
-        }
-
 		protected void AddButton_Click(object sender, EventArgs e)
-		{
+		{			
 			if(isFormValid){
 				var customer = (CreateCustomerCommand)GetMappedCustomerCommandModel(new CreateCustomerCommand());
 				customerService.CreateCustomer(customer);
 
 				PopulateCustomerListBox();
 				ClearForm();
+				ShowMessage("Customer Added");
 			}
 		}
 
@@ -183,7 +190,8 @@ namespace assessment_platform_developer
 				customerService.UpdateCustomer(customer);
 
 				PopulateCustomerListBox();
-				ClearForm();
+				ClearForm();				
+				ShowMessage("Customer Updated");
 				SetEditMode(false);
 			}
 		}
@@ -192,22 +200,24 @@ namespace assessment_platform_developer
 		{
 			customerService.DeleteCustomer(new DeleteCustomerCommand(){ID = Convert.ToInt32(CustomerId.Text) });
 			PopulateCustomerListBox();
-
 			ClearForm();
+			ShowMessage("Customer Deleted");
 			SetEditMode(false);
 		}
 
 		//Validations
-		protected void ZipCodeValidate(object source, ServerValidateEventArgs args)
+		public void ZipCodeValidate(object source, ServerValidateEventArgs args)
 		{
+			if(!isFormValid)
+				return;
+
 			string zip = args.Value;
 			if (!string.IsNullOrEmpty(zip))
 			{
 				args.IsValid = false;
 				if (Convert.ToInt32(CountryDropDownList.SelectedValue) == ((int)Countries.Canada))
 				{
-					Regex zipRegex = new Regex(@"^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$"); // Define regex for ZIP code format X#X-#X#
-					if (zipRegex.IsMatch(zip))
+					if (ValidationHelper.IsValidCanadianZiCode(zip))
 					{
 						args.IsValid = true;
 						isFormValid = true;
@@ -221,8 +231,7 @@ namespace assessment_platform_developer
 				}
 				else if (Convert.ToInt32(CountryDropDownList.SelectedValue) == ((int)Countries.UnitedStates))
 				{
-					Regex zipRegex = new Regex(@"^\d{5}(-\d{4})?$"); // Define regex for ZIP code format #####-#### or #####
-					if (zipRegex.IsMatch(zip))
+					if (ValidationHelper.IsValidUsZiCode(zip))
 					{
 						args.IsValid = true;
 						isFormValid = true;
@@ -233,6 +242,53 @@ namespace assessment_platform_developer
 						isFormValid = false;
 						return;
 					}
+				}
+			}
+		}
+
+		public void EmailValidate(object source, ServerValidateEventArgs args)
+		{
+			if(!isFormValid)
+				return;
+
+			string email = args.Value;			
+			if (!string.IsNullOrEmpty(email))
+			{
+				args.IsValid = false;
+				
+				if (ValidationHelper.IsValidEmail(email))
+				{
+					args.IsValid = true;
+					isFormValid = true;
+				}
+				else
+				{
+					args.IsValid = false;
+					isFormValid = false;
+					return;
+				}
+			}
+		}
+
+		public void PhoneNumberValidator(object source, ServerValidateEventArgs args)
+		{
+			if(!isFormValid)
+				return;
+
+			string phoneNumber = args.Value;
+			if (!string.IsNullOrEmpty(phoneNumber))
+			{
+				args.IsValid = false;
+				if (ValidationHelper.IsValidPhoneNumber(phoneNumber))
+				{
+					args.IsValid = true;
+					isFormValid = true;
+				}
+				else
+				{
+					args.IsValid = false;
+					isFormValid = false;
+					return;
 				}
 			}
 		}
@@ -290,5 +346,9 @@ namespace assessment_platform_developer
 			return createCustomer;
 		}
 		
+		private void ShowMessage(string message)
+		{
+			ClientScript.RegisterClientScriptBlock(this.GetType(), "message", "Swal.fire('"+message+"')", true);
+		}
 	}
 }

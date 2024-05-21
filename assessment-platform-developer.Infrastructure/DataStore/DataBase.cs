@@ -7,7 +7,7 @@ namespace assessment_platform_developer.Infrastructure.DataStore
 {
     internal static class DataBase
     {
-        //this is a temp file to store customer details
+        //this is a temp list for saving customer details
         public static List<Customer> customers = new List<Customer>();
     }
 }

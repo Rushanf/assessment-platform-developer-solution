@@ -5,7 +5,7 @@
 <head runat="server">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%: Page.Title %> RPM Platform Developer Assessment</title>
+    <title><%: Page.Title %> RPM Platform Developer Assessment</title>     
 
     <asp:PlaceHolder runat="server">
         <%: Scripts.Render("~/bundles/modernizr") %>
@@ -14,6 +14,7 @@
     <webopt:bundlereference runat="server" path="~/Content/css" />
     <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <form id="form1" runat="server">
@@ -30,7 +31,7 @@
                 <asp:ScriptReference Name="WebParts.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebParts.js" />
                 <asp:ScriptReference Name="Focus.js" Assembly="System.Web" Path="~/Scripts/WebForms/Focus.js" />
                 <asp:ScriptReference Name="WebFormsBundle" />
-            </Scripts>       
+            </Scripts>    
         </asp:ScriptManager>
 
         <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
@@ -73,26 +74,22 @@
                             <div class="form-group">
                                 <asp:Label ID="CustomerEmailLabel" runat="server" Text="Email" CssClass="form-label"></asp:Label>
                                 <asp:TextBox ID="CustomerEmail" runat="server" CssClass="form-control"></asp:TextBox>
-                                <asp:RegularExpressionValidator ID="validateEmail"    
-                                runat="server" ErrorMessage="Invalid email."
-                                ControlToValidate="CustomerEmail" 
-                                CssClass="text-danger"
-                                ValidationExpression="^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$" />
+                                <asp:CustomValidator ID="ValidateEmail" runat="server" OnServerValidate="EmailValidate"
+                                     ControlToValidate="CustomerEmail"
+                                     ErrorMessage="Invalid email."
+                                     CssClass="text-danger"
+                                     SetFocusOnError="True"></asp:CustomValidator>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <asp:Label ID="CustomerPhoneLabel" runat="server" Text="Phone" CssClass="form-label"></asp:Label>
                                 <asp:TextBox ID="CustomerPhone" runat="server" CssClass="form-control"></asp:TextBox>
-                                <asp:RegularExpressionValidator 
-                                    ID="PhoneNumberValidator" 
-                                    runat="server"
-                                    ControlToValidate="CustomerPhone"
-                                    ValidationExpression="^(?:\+1)?\s?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$"
-                                    ErrorMessage="Invalid phone number."
-                                    Display="Dynamic" 
-                                    ForeColor="Red" 
-                                    InitialValue="" />
+                                <asp:CustomValidator ID="CustomerPhoneNumberValidator" runat="server" OnServerValidate="PhoneNumberValidator"
+                                     ControlToValidate="CustomerPhone"
+                                     ErrorMessage="Invalid phone number."
+                                     CssClass="text-danger"
+                                     SetFocusOnError="True"></asp:CustomValidator>                                
                             </div>
                         </div>
                     </div>
@@ -159,27 +156,23 @@
                             <div class="form-group">
                                 <asp:Label ID="ContactEmailLabel" runat="server" Text="Email" CssClass="form-label"></asp:Label>
                                 <asp:TextBox ID="ContactEmail" runat="server" CssClass="form-control"></asp:TextBox>
-                                <asp:RegularExpressionValidator 
-                                    ID="validateContactEmail"    
-                                    runat="server" ErrorMessage="Invalid email."
-                                    ControlToValidate="CustomerEmail" 
+                                <asp:CustomValidator 
+                                    ID="validateContactEmail" runat="server" OnServerValidate="EmailValidate"
+                                    ControlToValidate="ContactEmail"
+                                    ErrorMessage="Invalid email."
                                     CssClass="text-danger"
-                                    ValidationExpression="^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$" />
+                                    SetFocusOnError="True"></asp:CustomValidator>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <asp:Label ID="ContactPhoneLabel" runat="server" Text="Phone" CssClass="form-label"></asp:Label>
                                 <asp:TextBox ID="ContactPhone" runat="server" CssClass="form-control"></asp:TextBox>
-                                <asp:RegularExpressionValidator 
-                                    ID="ContactPhoneNumberValidator" 
-                                    runat="server"
-                                    ControlToValidate="ContactPhone"
-                                    ValidationExpression="^(?:\+1)?\s?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$"
-                                    ErrorMessage="Invalid phone number."
-                                    Display="Dynamic" 
-                                    ForeColor="Red" 
-                                    InitialValue="" />
+                                <asp:CustomValidator ID="ContactPhoneNumberValidator" runat="server" OnServerValidate="PhoneNumberValidator"
+                                     ControlToValidate="ContactPhone"
+                                     ErrorMessage="Invalid phone number."
+                                     CssClass="text-danger"
+                                     SetFocusOnError="True"></asp:CustomValidator>                                  
                             </div>
                         </div>
                     </div>
@@ -196,11 +189,9 @@
 
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-        
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>        
      <script type="text/javascript">
         function validateForm() {
-                debugger;
             if (Page_ClientValidate()) {
                 return true;
             }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace assessment_platform_developer.Services
 {
-    internal interface ICustomerService
+    public interface ICustomerService
     {
         List<CustomerBasicResponse> GetAllCustomers();
         CustomerResponse GetCustomer(int id);

@@ -1,9 +1,6 @@
 ﻿using assessment_platform_developer.Application.Commands;
 using assessment_platform_developer.Application.Queries;
 using assessment_platform_developer.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace assessment_platform_developer.Application.Common.Mapper
 {

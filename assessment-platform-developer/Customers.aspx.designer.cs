@@ -69,24 +69,6 @@ namespace assessment_platform_developer
         protected global::System.Web.UI.WebControls.RequiredFieldValidator NameRequiredFieldValidator;
 
         /// <summary>
-        /// CustomerAddressLabel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label CustomerAddressLabel;
-
-        /// <summary>
-        /// CustomerAddress control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox CustomerAddress;
-
-        /// <summary>
         /// CustomerEmailLabel control.
         /// </summary>
         /// <remarks>
@@ -103,6 +85,15 @@ namespace assessment_platform_developer
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox CustomerEmail;
+
+        /// <summary>
+        /// ValidateEmail control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CustomValidator ValidateEmail;
 
         /// <summary>
         /// CustomerPhoneLabel control.
@@ -123,6 +114,33 @@ namespace assessment_platform_developer
         protected global::System.Web.UI.WebControls.TextBox CustomerPhone;
 
         /// <summary>
+        /// CustomerPhoneNumberValidator control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CustomValidator CustomerPhoneNumberValidator;
+
+        /// <summary>
+        /// CustomerAddressLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label CustomerAddressLabel;
+
+        /// <summary>
+        /// CustomerAddress control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox CustomerAddress;
+
+        /// <summary>
         /// CustomerCityLabel control.
         /// </summary>
         /// <remarks>
@@ -141,24 +159,6 @@ namespace assessment_platform_developer
         protected global::System.Web.UI.WebControls.TextBox CustomerCity;
 
         /// <summary>
-        /// CustomerStateLabel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label CustomerStateLabel;
-
-        /// <summary>
-        /// StateDropDownList control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList StateDropDownList;
-
-        /// <summary>
         /// CustomerZipLabel control.
         /// </summary>
         /// <remarks>
@@ -175,6 +175,33 @@ namespace assessment_platform_developer
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox CustomerZip;
+
+        /// <summary>
+        /// CustomZipValidator control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CustomValidator CustomZipValidator;
+
+        /// <summary>
+        /// CustomerStateLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label CustomerStateLabel;
+
+        /// <summary>
+        /// StateDropDownList control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList StateDropDownList;
 
         /// <summary>
         /// CustomerCountryLabel control.
@@ -249,6 +276,15 @@ namespace assessment_platform_developer
         protected global::System.Web.UI.WebControls.TextBox ContactEmail;
 
         /// <summary>
+        /// validateContactEmail control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CustomValidator validateContactEmail;
+
+        /// <summary>
         /// ContactPhoneLabel control.
         /// </summary>
         /// <remarks>
@@ -265,6 +301,15 @@ namespace assessment_platform_developer
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox ContactPhone;
+
+        /// <summary>
+        /// ContactPhoneNumberValidator control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CustomValidator ContactPhoneNumberValidator;
 
         /// <summary>
         /// AddButton control.
