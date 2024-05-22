@@ -56,7 +56,9 @@ namespace assessment_platform_developer.Configs
             // Register Repositories
             container.Register<IReadRepository<Customer>, ReadCustomerRepository>(Lifestyle.Scoped);
             container.Register<IWriteRepository<Customer>, WriteCustomerRepository>(Lifestyle.Scoped);
-            
+            //container.Register<IReadRepository<Customer>, ReadCustomerDBRepository>(Lifestyle.Scoped);
+            //container.Register<IWriteRepository<Customer>, WriteCustomerDBRepository>(Lifestyle.Scoped);
+
             // Register Services
             container.Register<ICustomerService, CustomerService>(Lifestyle.Scoped);
         }
