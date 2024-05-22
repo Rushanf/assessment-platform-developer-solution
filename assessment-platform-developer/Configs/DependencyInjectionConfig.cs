@@ -12,6 +12,8 @@ using System.Linq;
 using System.Reflection;
 using System.Web.Compilation;
 using System.Web.UI;
+using assessment_platform_developer.Services.Interfaces;
+using assessment_platform_developer.Services;
 
 namespace assessment_platform_developer.Configs
 {
@@ -54,6 +56,9 @@ namespace assessment_platform_developer.Configs
             // Register Repositories
             container.Register<IReadRepository<Customer>, ReadCustomerRepository>(Lifestyle.Scoped);
             container.Register<IWriteRepository<Customer>, WriteCustomerRepository>(Lifestyle.Scoped);
+            
+            // Register Services
+            container.Register<ICustomerService, CustomerService>(Lifestyle.Scoped);
         }
 
         private static void RegisterWebPages(Container container)

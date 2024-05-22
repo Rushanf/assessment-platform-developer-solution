@@ -1,8 +1,12 @@
 ﻿using assessment_platform_developer.Application.Commands;
 using assessment_platform_developer.Application.Common;
 using assessment_platform_developer.Application.Queries;
+using assessment_platform_developer.Services.Interfaces;
 using SimpleInjector;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Web;
 
 namespace assessment_platform_developer.Services
 {
@@ -17,32 +21,32 @@ namespace assessment_platform_developer.Services
 
         public List<CustomerBasicResponse> GetAllCustomers()
         {
-            var queryHandler = _container.GetInstance<IQueryHandler<GetAllCustomersQuery, List<CustomerBasicResponse>>>();
-            return queryHandler.Handle(new GetAllCustomersQuery());
+            ICustomerQueryService customerQueryService = new CustomerQueryService(_container);
+            return customerQueryService.GetAllCustomers().ToList();
         }
 
         public CustomerResponse GetCustomer(int id)
         {
-            var queryHandler = _container.GetInstance<IQueryHandler<GetCustomerQuery, CustomerResponse>>();
-            return queryHandler.Handle(new GetCustomerQuery { ID = id });
+            ICustomerQueryService customerQueryService = new CustomerQueryService(_container);
+            return customerQueryService.GetCustomer(id);
         }
 
         public void CreateCustomer(CreateCustomerCommand command)
         {
-            var commandHandler = _container.GetInstance<ICommandHandler<CreateCustomerCommand>>();
-            commandHandler.Handle(command);
+            ICustomerCommandService customerCommandService = new CustomerCommandService(_container);
+            customerCommandService.CreateCustomer(command);
         }
 
         public void UpdateCustomer(UpdateCustomerCommand command)
         {
-            var commandHandler = _container.GetInstance<ICommandHandler<UpdateCustomerCommand>>();
-            commandHandler.Handle(command);
+            ICustomerCommandService customerCommandService = new CustomerCommandService(_container);
+            customerCommandService.UpdateCustomer(command);
         }
 
         public void DeleteCustomer(DeleteCustomerCommand command)
         {
-            var commandHandler = _container.GetInstance<ICommandHandler<DeleteCustomerCommand>>();
-            commandHandler.Handle(command);
+            ICustomerCommandService customerCommandService = new CustomerCommandService(_container);
+            customerCommandService.DeleteCustomer(command);
         }
     }
 }

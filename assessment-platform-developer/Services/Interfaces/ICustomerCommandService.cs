@@ -1,13 +1,14 @@
 ﻿using assessment_platform_developer.Application.Commands;
-using assessment_platform_developer.Application.Queries;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace assessment_platform_developer.Services
+namespace assessment_platform_developer.Services.Interfaces
 {
-    public interface ICustomerService
+    public interface ICustomerCommandService
     {
-        List<CustomerBasicResponse> GetAllCustomers();
-        CustomerResponse GetCustomer(int id);
         void CreateCustomer(CreateCustomerCommand command);
         void UpdateCustomer(UpdateCustomerCommand command);
         void DeleteCustomer(DeleteCustomerCommand command);

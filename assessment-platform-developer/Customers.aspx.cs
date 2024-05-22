@@ -12,26 +12,28 @@ using System.Text.RegularExpressions;
 using assessment_platform_developer.Services;
 using System.Reflection.Emit;
 using assessment_platform_developer.Common.Helpers;
+using assessment_platform_developer.Services.Interfaces;
 
 namespace assessment_platform_developer
 {
 	public partial class Customers : Page
 	{
 		private static List<CustomerBasicResponse> customers = new List<CustomerBasicResponse>();
-        private readonly ICustomerService customerService;
+		private readonly ICustomerService customerService; 
 		bool isFormValid = true;
 
 		public Customers()
 		{
-			customerService = new CustomerService((Container)HttpContext.Current.Application["DIContainer"]);
+			this.customerService = new CustomerService((Container)HttpContext.Current.Application["DIContainer"]);
 		}
 
-		////For Testing : uncomment for testing and comment the default constructor
+
+		//uncomment for testing
 		//public Customers(ICustomerService customerService)
 		//{
 		//	this.customerService = customerService;
 		//}
-		//public DropDownList TestCountryDropDownList => CountryDropDownList;
+		public DropDownList TestCountryDropDownList => CountryDropDownList;
 
 
 		protected void Page_Load(object sender, EventArgs e)
