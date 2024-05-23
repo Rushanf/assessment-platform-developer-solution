@@ -1,5 +1,7 @@
 Whats Done
 
+*** Please clean and rebuild the app before running it for the first time
+
 COde Refactoring to adhere SOLID & CQRS.
 Validations =>  Name (Required)
 		Email (Format)
