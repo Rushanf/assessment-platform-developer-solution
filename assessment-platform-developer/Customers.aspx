@@ -189,17 +189,9 @@
 
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>        
-     <script type="text/javascript">
-        function validateForm() {
-            if (Page_ClientValidate()) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-    </script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>  
+        <script src="Scripts/Validation/FormValidation.js"></script> 
+      
     </form>
 </body>
 </html>
